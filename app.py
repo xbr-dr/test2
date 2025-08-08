@@ -95,7 +95,7 @@ def get_api_key():
     try:
         return st.secrets["GROQ_API_KEY"]
     except:
-        return st.sidebar.text_input("Groq API Key", type="password")
+        return st.sidebar.text_input("Groq API Key", type="password", key="groq_api_key_input")
 
 def extract_pdf_text(pdf_file):
     """Extract text from PDF with fallback"""
@@ -321,7 +321,8 @@ def admin_page():
     files = st.file_uploader(
         "Upload Files",
         type=['pdf', 'csv', 'xlsx', 'xls'],
-        accept_multiple_files=True
+        accept_multiple_files=True,
+        key="admin_file_uploader"
     )
     
     if files:
@@ -390,7 +391,7 @@ def admin_page():
         st.dataframe(df)
     
     # Clear data
-    if st.button("Clear All Data"):
+    if st.button("Clear All Data", key="clear_all_data_btn"):
         st.session_state.knowledge_base = []
         st.session_state.location_data = []
         st.session_state.chat_history = []
@@ -417,7 +418,7 @@ def user_page():
                 show_map(location)
     
     # Chat input
-    if prompt := st.chat_input("Ask about the campus..."):
+    if prompt := st.chat_input("Ask about the campus...", key="user_chat_input"):
         # Search knowledge base
         if st.session_state.knowledge_base:
             if hasattr(st.session_state, 'search_model') and st.session_state.search_model:
@@ -461,7 +462,7 @@ def main():
             st.sidebar.warning(f"⚠️ {item}")
     
     # Page selection
-    page = st.sidebar.selectbox("Choose Page", ["User Chat", "Admin Panel"])
+    page = st.sidebar.selectbox("Choose Page", ["User Chat", "Admin Panel"], key="page_selector")
     
     # API key status
     api_key = get_api_key()
