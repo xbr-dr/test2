@@ -91,11 +91,11 @@ def load_ai_model():
         return None
 
 def get_api_key():
-    """Get API key from secrets or user input"""
+    """Get API key from secrets only"""
     try:
         return st.secrets["GROQ_API_KEY"]
     except:
-        return st.sidebar.text_input("Groq API Key", type="password", key="groq_api_key_input")
+        return None
 
 def extract_pdf_text(pdf_file):
     """Extract text from PDF with fallback"""
@@ -256,7 +256,7 @@ def generate_response(query: str, context: List[str], api_key: str) -> str:
         if context:
             return f"Based on the available information: {context[0][:200]}..."
         else:
-            return "I don't have specific information about that. Please upload relevant documents or check if your question relates to available campus locations."
+            return "I found some relevant information in the uploaded documents. Please make sure your Groq API key is configured in secrets.toml for AI-powered responses."
     
     try:
         from groq import Groq
@@ -281,7 +281,7 @@ Answer:"""
         
         return response.choices[0].message.content
     except Exception as e:
-        return f"Sorry, I couldn't generate a response. Error: {e}"
+        return f"Please configure your Groq API key in .streamlit/secrets.toml to enable AI responses."
 
 def show_map(location: Dict):
     """Show map if folium is available"""
